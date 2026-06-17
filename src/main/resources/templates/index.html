@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SmartRequests | Solicitudes Académicas</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        body {
+            min-height: 100vh;
+            background: #f4f7fb;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .topbar {
+            background: linear-gradient(135deg, #4e73df, #1cc88a);
+            padding: 22px 0;
+            color: white;
+            box-shadow: 0 8px 24px rgba(78, 115, 223, 0.25);
+        }
+
+        .page-title {
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .page-subtitle {
+            margin: 0;
+            opacity: .9;
+            font-size: .95rem;
+        }
+
+        .card-custom {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, .08);
+        }
+
+        .hero-card {
+            background: white;
+            overflow: hidden;
+        }
+
+        .hero-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #4e73df, #1cc88a);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+        }
+
+        .btn-main {
+            background: linear-gradient(135deg, #4e73df, #1cc88a);
+            border: none;
+            border-radius: 12px;
+            padding: 10px 18px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .btn-main:hover {
+            opacity: .95;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 12px;
+            padding: 11px 14px;
+            border: 1px solid #d9dee8;
+        }
+
+        .table {
+            vertical-align: middle;
+        }
+
+        .table thead th {
+            background: #eef3ff;
+            color: #344767;
+            font-size: .85rem;
+            text-transform: uppercase;
+            letter-spacing: .03rem;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f8fbff;
+        }
+
+        .badge-status {
+            border-radius: 20px;
+            padding: 7px 12px;
+            font-weight: 600;
+        }
+
+        .action-btn {
+            border-radius: 10px;
+            padding: 6px 10px;
+        }
+
+        .section-title {
+            font-weight: 700;
+            color: #344767;
+        }
+
+        .text-soft {
+            color: #6c757d;
+        }
+
+        .text-soft {
+            color: #6c757d;
+        }
+
+@media (max-width: 768px) {
+
+    .topbar .container {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+
+    .page-title {
+        font-size: 1.4rem;
+    }
+
+    .hero-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 22px;
+    }
+
+    .card-body {
+        padding: 1rem !important;
+    }
+
+    .section-title {
+        font-size: 1rem;
+    }
+
+}
+    </style>
+</head>
+
+<body>
+
+<nav class="topbar mb-4">
+
+    <div class="container d-flex justify-content-between align-items-center">
+        <div>
+            <h4 class="page-title">
+                <i class="bi bi-mortarboard-fill me-2"></i>
+                SmartRequests
+            </h4>
+            <p class="page-subtitle">Sistema de Solicitudes Académicas</p>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+
+            <a href="/nueva" class="btn btn-light fw-semibold rounded-3">
+                <i class="bi bi-plus-circle me-1"></i>
+                Nueva solicitud
+            </a>
+
+            <div class="dropdown">
+                <button class="btn btn-outline-light dropdown-toggle rounded-3"
+                        type="button"
+                        data-bs-toggle="dropdown">
+                    <i class="bi bi-person-circle me-1"></i>
+                    Perfil
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-end">
+
+                    <li>
+                        <a class="dropdown-item" href="/perfil">
+                            <i class="bi bi-person me-1"></i>
+                            Mi perfil
+                        </a>
+                    </li>
+
+                    <li th:if="${session.usuarioLogueado.rol == 'ADMIN'}">
+                        <a class="dropdown-item" href="/admin">
+                            <i class="bi bi-speedometer2 me-2"></i>
+                            Panel administrador
+                        </a>
+                    </li>
+
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="/configuracion">
+                            <i class="bi bi-gear me-1"></i>
+                            Configuración
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item text-danger" href="/logout">
+                            <i class="bi bi-box-arrow-right me-1"></i>
+                            Cerrar sesión
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+
+    <div class="row mb-4">
+
+        <div class="col-md-4 mb-3">
+            <div class="card card-custom h-100">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="hero-icon">
+                        <i class="bi bi-file-earmark-text"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-soft mb-1">Total solicitudes</h6>
+                        <h3 class="section-title mb-0" th:text="${#lists.size(solicitudes)}">0</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card card-custom h-100">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="hero-icon">
+                        <i class="bi bi-hourglass-split"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-soft mb-1">Seguimiento</h6>
+                        <h5 class="section-title mb-0">Consulta estados</h5>
+                        <small class="text-soft">Pendiente, aprobada o rechazada</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card card-custom h-100">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="hero-icon">
+                        <i class="bi bi-patch-check"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-soft mb-1">Certificados</h6>
+                        <h5 class="section-title mb-0">Descarga disponible</h5>
+                        <small class="text-soft">Solo cuando esté aprobada</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="card card-custom mb-4">
+        <div class="card-body p-4">
+            <h5 class="section-title mb-3">
+                <i class="bi bi-search me-1"></i>
+                Buscar solicitudes
+            </h5>
+
+            <form action="/buscar" method="get" class="row g-3">
+                <div class="col-md-3">
+                    <select name="criterio" class="form-select" id="criterioBusqueda">
+                        <option value="nombre">Buscar por nombre</option>
+                        <option value="estado">Buscar por estado</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <input type="text" name="valor" class="form-control" id="valorBusqueda"
+                           placeholder="Escribe el valor que deseas consultar">
+                </div>
+
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-main w-100" id="btnBuscar">
+                        <i class="bi bi-search me-1"></i>
+                        Buscar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card card-custom">
+        <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h5 class="section-title mb-0">Listado de solicitudes</h5>
+                    <small class="text-soft">Consulta y administra los registros existentes.</small>
+                </div>
+                <a href="/" class="btn btn-outline-secondary rounded-3">
+                    <i class="bi bi-arrow-clockwise me-1"></i>
+                    Ver todas
+                </a>
+                <a href="/exportar/solicitudes" class="btn btn-outline-success rounded-3">
+                    <i class="bi bi-file-earmark-excel me-1"></i>
+                    Exportar mis solicitudes
+                </a>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle" id="tablaSolicitudes">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Correo</th>
+                        <th>Tipo</th>
+                        <th>Prioridad</th>
+                        <th>Estado</th>
+                        <th>Fecha</th>
+                        <th>Acciones</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:each="solicitud : ${solicitudes}">
+                        <td class="fw-semibold" th:text="${solicitud.id}"></td>
+                        <td th:text="${solicitud.nombre}"></td>
+                        <td th:text="${solicitud.correo}"></td>
+                        <td th:text="${solicitud.tipo}"></td>
+                        <td th:text="${solicitud.prioridad}"></td>
+                        <td>
+                            <span class="badge rounded-pill badge-status"
+                                  th:text="${solicitud.estado}"
+                                  th:classappend="
+                                    ${solicitud.estado == 'Aprobada'} ? 'bg-success text-white' :
+                                    (${solicitud.estado == 'Rechazada'} ? 'bg-danger text-white' :
+                                    (${solicitud.estado == 'En revisión'} ? 'bg-info text-dark' :
+                                    'bg-warning text-dark'))
+                                  ">
+                            </span>
+                        </td>
+                        <td th:text="${solicitud.fechaCreacion}"></td>
+                        <td class="d-flex gap-1">
+
+                            <!-- CERTIFICADO -->
+                            <a th:if="${solicitud.tipo == 'Certificado' and solicitud.estado == 'Aprobada'}"
+                               th:href="@{/certificado/{id}(id=${solicitud.id})}"
+                               class="btn btn-sm btn-outline-success action-btn"
+                               title="Ver certificado">
+                                <i class="bi bi-file-earmark-check"></i>
+                            </a>
+
+                            <!-- EDITAR -->
+                            <a th:href="@{/editar/{id}(id=${solicitud.id})}"
+                               class="btn btn-sm btn-outline-warning action-btn">
+
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+
+                            <!-- ELIMINAR -->
+                            <a th:href="@{/eliminar/{id}(id=${solicitud.id})}"
+                               class="btn btn-sm btn-outline-danger action-btn"
+                               onclick="return confirm('¿Está seguro de eliminar esta solicitud?')">
+
+                                <i class="bi bi-trash"></i>
+                            </a>
+
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Evita que el navegador muestre páginas privadas desde caché
+    window.addEventListener("pageshow", function (event) {
+        if (event.persisted) {
+            window.location.reload();
+        }
+    });
+
+    // Si el usuario presiona atrás estando autenticado, se cierra la sesión
+    history.pushState(null, "", location.href);
+
+    window.addEventListener("popstate", function () {
+        window.location.replace("/logout");
+    });
+</script>
+</body>
+</html>
